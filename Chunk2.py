@@ -5,6 +5,12 @@ import nltk
 import re
 from collections import Counter
 
+def get_community(theWord):
+	try:
+		return str(((wn.synsets(theWord)[0]).hypernyms()[0]).lemma_names()[0])
+	except IndexError:
+		return theWord
+
 date = r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d.*\d\s*$"
 pattern=re.compile(date)
 
@@ -46,15 +52,22 @@ for bod in clean_bodies:
     cleaner_bodies.append(inner_body)
         
         
-print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+
 print cleaner_bodies[1]
 
-#community_dictlist = []
-#for article in cleaner_bodies:
-#   community_dict = {}
-#    for word in article:
-        
-        
+community_dictlist = []
+
+for article in cleaner_bodies:
+	community_dict = {}
+	for word in article:
+		if get_community(word) in community_dict:
+			community_dict[get_community(word)] += 1
+		else:
+			community_dict[get_community(word)] = 1
+	community_dictlist.append(community_dict)
+	
+print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+print community_dictlist[1]
         
 #location_array=[]
 #p=0
