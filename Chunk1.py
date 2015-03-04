@@ -57,9 +57,7 @@ class NL(object):
         top_facilities=[Counter(facility).most_common(10)]
         return top_facilities[0]
     
-print "Enter a sentence[s] to extract stuff"
-words = raw_input()
-print NL(words).noun()
+
 
 #db.test4.insert([{"noun":list(NL(words).noun())},{"pronouns":list(NL(words).pnoun())},{"persons":list(NL(words).person())},{"locations":list(NL(words).location())}])
 #posts.insert({"persons":list(NL(words).person())})
