@@ -4,13 +4,6 @@ from nltk.corpus import wordnet as wn, stopwords
 import nltk
 import re
 from collections import Counter
-
-def get_community(theWord):
-	try:
-		return str(((wn.synsets(theWord)[0]).hypernyms()[0]).lemma_names()[0])
-	except IndexError:
-		return theWord
-
 date = r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d.*\d\s*$"
 pattern=re.compile(date)
 
@@ -23,6 +16,18 @@ bodies=[]
 bodies.append('')
 i=0
 
+def get_community(theWord):
+	wrd = ""
+	if wn.morphy(theWord) is None:
+		wrd = theWord
+	else:
+		wrd = str(wn.morphy(theWord))
+		
+	try:
+		return str(((wn.synsets(wrd)[0]).hypernyms()[0]).lemma_names()[0])
+	except IndexError:
+		return wrd
+
 for line in data.split("\n"):
     line+="\n"
     if pattern.search(line):
@@ -30,49 +35,27 @@ for line in data.split("\n"):
         bodies.append('')
     else:
         bodies[i]+=line
- 
-clean_bodies=[]
-j=0
-for body in bodies:
-    clean_bodies.append((re.findall(r'\b([a-zA-Z]+)\b',bodies[j])))
-    j += 1
-    
+		
+#print bodies[1]
+location_array=[]
+p=0
+for locations in bodies:
+    location_array.append(NL(bodies[p]).pnoun() + NL(bodies[p]).noun())
+    p+=1
+#print data
 
-cleaner_bodies = []
-
-for bod in clean_bodies:
-    inner_body = []
-    for word in bod:
-        if word in stopwords.words('english'):
-            pass
-        elif wn.morphy(word) is None:
-            inner_body.append(word)
-        else:
-            inner_body.append(str(wn.morphy(word)))
-    cleaner_bodies.append(inner_body)
-        
-        
-
-print cleaner_bodies[1]
+print location_array[1]
 
 community_dictlist = []
-
-for article in cleaner_bodies:
+for article in location_array:
 	community_dict = {}
-	for word in article:
-		if get_community(word) in community_dict:
-			community_dict[get_community(word)] += 1
+	for wordfreq in article:
+		if get_community(wordfreq[0]) in community_dict:
+			community_dict[get_community(wordfreq[0])] += wordfreq[1]
 		else:
-			community_dict[get_community(word)] = 1
+			community_dict[get_community(wordfreq[0])] = wordfreq[1]
 	community_dictlist.append(community_dict)
 	
-print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 print community_dictlist[1]
-        
-#location_array=[]
-#p=0
-#for locations in bodies:
-#    location_array.append(NL(bodies[p]).pnoun())
-#    p+=1
-#print data
-#location_array[2]
+
