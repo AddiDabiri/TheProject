@@ -3,6 +3,7 @@ from nltk import pos_tag, ne_chunk
 from nltk.corpus import wordnet as wn, stopwords
 import nltk
 import re
+import operator
 from collections import Counter
 date = r"(January|February|March|April|May|June|July|August|September|October|November|December)\s+\d.*\d\s*$"
 pattern=re.compile(date)
@@ -44,7 +45,7 @@ for locations in bodies:
     p+=1
 #print data
 
-print location_array[1]
+print location_array[2]
 
 community_dictlist = []
 for article in location_array:
@@ -54,8 +55,10 @@ for article in location_array:
 			community_dict[get_community(wordfreq[0])] += wordfreq[1]
 		else:
 			community_dict[get_community(wordfreq[0])] = wordfreq[1]
-	community_dictlist.append(community_dict)
+	community_dictlist.append(sorted(community_dict.items(),key=operator.itemgetter(1), reverse = True))
+
+
 	
 print "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-print community_dictlist[1]
+print community_dictlist[2]
 
